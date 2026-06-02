@@ -1,10 +1,12 @@
+package RMI;
+
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServiceCentral implements ServiceRMI{
+public class ServiceCentral implements ServiceRMI {
 
     List<String> listeClients = new ArrayList<>();
 
