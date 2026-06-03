@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static jdk.tools.jlink.internal.runtimelink.ResourceDiff.read;
-
 public class RestaurantsAppel implements HttpHandler {
     public void handle(HttpExchange t) throws IOException {
         InputStream is = t.getRequestBody();
@@ -18,5 +16,10 @@ public class RestaurantsAppel implements HttpHandler {
         OutputStream os = t.getResponseBody();
         os.write(response.getBytes());
         os.close();
+    }
+
+    private void read(InputStream is) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'read'");
     }
 }
