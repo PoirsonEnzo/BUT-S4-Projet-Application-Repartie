@@ -25,5 +25,8 @@ public class ProxyServer {
             System.err.println("Erreur lors du démarrage du serveur proxy : " + e.getMessage());
         }
     }
+    public static void printTest(){
+        System.out.println("test");
+    }
 }
 

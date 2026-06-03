@@ -1,7 +1,26 @@
 package handlers;
 
+import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-public class TrafficAppel implements HttpHandler {
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
+public class TrafficAppel implements HttpHandler {
+    public void handle(HttpExchange t) throws IOException {
+        System.out.println("Connecté");
+        InputStream is = t.getRequestBody();
+        read(is); // .. read the request body
+        String response = "This is the response";
+        t.sendResponseHeaders(200, response.length());
+        OutputStream os = t.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+    private void read(InputStream is) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'read'");
+    }
 }
