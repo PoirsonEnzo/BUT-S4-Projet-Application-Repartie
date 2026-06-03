@@ -1,3 +1,4 @@
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.sql.*;
 import java.lang.String;
@@ -8,23 +9,31 @@ public class ServiceCentral implements ServiceRMI {
     public void enregisterClient() throws RemoteException {
 
     }
-
     @Override
     public String getCoordonnees() throws RemoteException {
-        StringBuilder json = new StringBuilder("{coords:[");
+        StringBuilder json = new StringBuilder("{restaurants:[");
         try {
             Connection connection = DBConnection.getConnection();
             Statement statm = connection.createStatement();
             statm.execute("""
-        SELECT coordX, coordY FROM restaurants 
+        SELECT * FROM restaurants 
             """);
-            //TODO Rajouter nom et id
+
             ResultSet rs = statm.getResultSet();
             while (rs.next()){
-                int x = rs.getInt(1);
-                int y = rs.getInt(2);
-                json.append("[").append(x).append(",").append(y).append("],");
+                //TODO REMPLACER PAR JSON STRINGIFY
+                int longitude = rs.getInt("LONGITUDE");
+                int latitude = rs.getInt("LATITUDE");
+                int id = rs.getInt("ID_RESTAURANT");
+                String nom = rs.getString("NOM");
+                String adresse = rs.getString("ADRESSE");
+                json.append("{'longitude' : '").append(longitude).append("',")
+                    .append("'latitude' : '").append(latitude).append("',")
+                    .append("'id' : '").append(id).append("',")
+                        .append("'nom' : '").append(nom).append("',")
+                        .append("'adresse' :  '").append(adresse).append("'},");
             }
+            statm.close();
             json.deleteCharAt(json.length()-1);
             json.append("]}");
             return json.toString();
@@ -33,48 +42,65 @@ public class ServiceCentral implements ServiceRMI {
         }
     }
 
-
-
     @Override
-    public void reserverTable(int id, String prenom, String nom, int nbrPersonnes, String telephone,String date) throws RemoteException {
+    public String reserverTable(int idRestau, String date, String periode, int nbrPersonnes, String prenom, String nom, String telephone) throws RemoteException, SQLException {
+        Connection connection = null;
         try {
-            Connection connection = DBConnection.getConnection();
-            PreparedStatement ps = connection.prepareStatement("""
-            INSERT INTO reservation VALUES (?,?,?,?,?,TO_DATE(?, 'DD-MM-YYYY'))
-""");
-            ps.setInt(1,id);
-            ps.setString(2,prenom);
-            ps.setString(3,nom);
-            ps.setInt(4,nbrPersonnes);
-            ps.setString(5,telephone);
-            ps.setString(6,date);
+            connection = DBConnection.getConnection();
 
-            ps.execute();
-            connection.commit();
-            ps.close();
-            connection.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public String getTable(int id) throws RemoteException{
-        try {
-            Connection connection = DBConnection.getConnection();
-            PreparedStatement ps = connection.prepareStatement("""
-            SELECT * FROM tables WHERE id = ?;
+            // Recherche des tables disponibles pour un restaurant, un nombre de personnes et un créneau donné
+            PreparedStatement statm = connection.prepareStatement("""
+            SELECT ID_TABLE 
+            FROM TABLE_RESTO
+            WHERE ID_RESTAURANT = ? AND CAPACITE_MAX <= ?
+            MINUS 
+            SELECT ID_TABLE
+            FROM RESERVATION
+            WHERE DATE_RESERVATION = TO_DATE(?,'DD-MM-YYYY') AND PERIODE = ?
+            FOR UPDATE
 """);
-            ps.setInt(1,id);
-            ps.execute();
-            ResultSet rs = ps.getResultSet();
-            StringBuilder json = new StringBuilder("{ table : {");
-            while (rs.next()){
-                //TODO CREER TABLE
+            statm.setInt(1,idRestau);
+            statm.setInt(2,nbrPersonnes);
+            statm.setString(3,date);
+            statm.setString(4,periode);
+
+            statm.execute();
+            ResultSet rs = statm.getResultSet();
+
+            String json = "";
+            // Ligne présente = Réservation disponible
+            if (rs.next()){
+                int idTable = rs.getInt(1);
+
+                // Ajout de la réservation
+                PreparedStatement ps = connection.prepareStatement("""
+                INSERT INTO RESERVATION (ID_TABLE, NOM_CLIENT, PRENOM_CLIENT, TELEPHONE, DATE_RESERVATION,NB_CONVIVES,EST_MIDI) 
+                VALUES (?,?,?,?,TO_DATE(?, 'DD-MM-YYYY'),?,?)
+                """);
+                ps.setInt(1,idTable);
+                ps.setString(2,nom);
+                ps.setString(3,prenom);
+                ps.setString(4,telephone);
+                ps.setString(5,date);
+                ps.setInt(6,nbrPersonnes);
+                ps.setString(7,periode);
+                ps.execute();
+
+                connection.commit();
+
+                statm.close();
+
+                json = "{'response' : 'OK'}";
+            } else {
+                connection.commit();
+                statm.close();
+                json = "{'response' : 'FAILURE'}";
+
             }
-            json.append("}}");
-            return json.toString();
+            return json;
+
         } catch (SQLException e) {
+            if (connection != null) connection.rollback();
             throw new RuntimeException(e);
         }
     }

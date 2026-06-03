@@ -1,5 +1,6 @@
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 
 public interface ServiceRMI extends Remote {
 
@@ -7,7 +8,5 @@ public interface ServiceRMI extends Remote {
 
     String getCoordonnees() throws RemoteException;
 
-    void reserverTable(int idTable, String prenom, String nom, int nbrPersonnes, String telephone,String date) throws RemoteException;
-
-    String getTable(int id) throws RemoteException;
+    String reserverTable(int idRestau, String date, String periode, int nbrPersonnes, String prenom, String nom, String telephone) throws RemoteException, SQLException;
 }

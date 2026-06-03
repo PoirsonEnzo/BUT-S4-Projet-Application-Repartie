@@ -16,7 +16,7 @@ public class DBConnection {
         connectionProps.put("password", mdp);
         String urlDB = "jdbc:oracle:thin:@charlemagne.iutnc.univ-lorraine.fr:1521:infodb";
         DBConnection.instance = DriverManager.getConnection(urlDB, connectionProps);
-        //instance.setAutoCommit(false);
+        instance.setAutoCommit(false);
     }
 
     public static synchronized Connection getConnection() throws SQLException {
@@ -29,10 +29,4 @@ public class DBConnection {
         }
         return DBConnection.instance;
     }
-
-
-
-
-
-
 }
