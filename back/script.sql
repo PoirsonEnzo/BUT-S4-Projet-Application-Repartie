@@ -27,7 +27,7 @@ CREATE TABLE RESERVATION (
     telephone VARCHAR2(20) NOT NULL,
     date_heure_reservation DATE NOT NULL,
     nb_convives NUMBER NOT NULL,
-    est_midi VARCHAR2(20) NOT NULL,
+    periode VARCHAR2(20) NOT NULL,
     CONSTRAINT pk_reservation PRIMARY KEY (id_reservation),
     CONSTRAINT fk_resa_table FOREIGN KEY (id_table) REFERENCES TABLE_RESTO(id_table) ON DELETE CASCADE
 );
