@@ -11,7 +11,7 @@ public class ProxyServer {
             //Définir le port (récupéré idéalement depuis un fichier de config)
             int port = 8080; //définition du port
             HttpServer server = HttpServer.create(new InetSocketAddress(port), 0); //Création du server
-            //System.out.println("Proxy HTTP démarré sur le port " + port);
+            System.out.println("Proxy HTTP démarré sur le port " + port);
 
             //Associer les routes aux gestionnaires (Handlers)
             server.createContext("/api/restaurants", new RestaurantsAppel());
@@ -20,7 +20,7 @@ public class ProxyServer {
 
             server.setExecutor(null);
             server.start();
-            System.out.println("Proxy HTTP démarré sur le port " + port);
+
         } catch (IOException e) {
             System.err.println("Erreur lors du démarrage du serveur proxy : " + e.getMessage());
         }
