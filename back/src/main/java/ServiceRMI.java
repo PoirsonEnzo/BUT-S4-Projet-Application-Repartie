@@ -7,5 +7,7 @@ public interface ServiceRMI extends Remote {
 
     String getCoordonnees() throws RemoteException;
 
-    void reserverTable(int idTable, String prenom, String nom, int nbrPersonnes, String telephone) throws RemoteException;
+    void reserverTable(int idTable, String prenom, String nom, int nbrPersonnes, String telephone,String date) throws RemoteException;
+
+    String getTable(int id) throws RemoteException;
 }
