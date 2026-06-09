@@ -16,6 +16,7 @@ target/
 *.xml
 out/
 *.jar
+*.class
 
 ### Eclipse ###
 .apt_generated

@@ -67,7 +67,7 @@ public class ServiceCentral implements ServiceRMI {
             statm.execute();
             ResultSet rs = statm.getResultSet();
 
-            String json = "";
+            String json;
             // Ligne présente = Réservation disponible
             if (rs.next()){
                 int idTable = rs.getInt(1);
