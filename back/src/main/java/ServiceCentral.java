@@ -4,10 +4,7 @@ import java.lang.String;
 
 public class ServiceCentral implements ServiceRMI {
 
-    @Override
-    public void enregisterClient() throws RemoteException {
 
-    }
     @Override
     public String getCoordonnees() throws RemoteException {
         StringBuilder json = new StringBuilder("{restaurants:[");
@@ -52,6 +49,7 @@ public class ServiceCentral implements ServiceRMI {
             SELECT ID_TABLE 
             FROM TABLE_RESTO
             WHERE ID_RESTAURANT = ? AND CAPACITE_MAX <= ?
+            ORDER BY CAPACITE_MAX
             MINUS 
             SELECT ID_TABLE
             FROM RESERVATION

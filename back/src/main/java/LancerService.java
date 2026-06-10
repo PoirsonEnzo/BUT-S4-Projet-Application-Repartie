@@ -10,5 +10,18 @@ public class LancerService {
         ServiceRMI rmi = (ServiceRMI) UnicastRemoteObject.exportObject(service,0);
         Registry reg = LocateRegistry.createRegistry(1099);
         reg.rebind("BDDRestaurant",rmi);
+        System.out.println("Service activé");
+        try {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+        } catch (ClassNotFoundException e){
+            System.out.println("penis");
+        }
+
+        System.out.println(service.getCoordonnees());
+
+
+
+
+
     }
 }
