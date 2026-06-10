@@ -13,10 +13,10 @@ target/
 *.ipr
 .mvn
 .idea
-*.xml
 out/
 *.jar
 *.class
+*.conf
 
 ### Eclipse ###
 .apt_generated

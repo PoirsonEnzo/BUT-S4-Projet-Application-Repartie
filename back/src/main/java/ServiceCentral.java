@@ -1,38 +1,40 @@
+import com.google.gson.Gson;
+
 import java.rmi.RemoteException;
 import java.sql.*;
 import java.lang.String;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServiceCentral implements ServiceRMI {
 
 
     @Override
     public String getCoordonnees() throws RemoteException {
-        StringBuilder json = new StringBuilder("{restaurants:[");
         try {
             Connection connection = DBConnection.getConnection();
             Statement statm = connection.createStatement();
-            statm.execute("""
-        SELECT * FROM restaurants 
-            """);
-
+            statm.executeQuery("""
+            SELECT * FROM RESTAURANT 
+                """);
             ResultSet rs = statm.getResultSet();
+            List<Restaurant> liste = new ArrayList<>();
+
+
             while (rs.next()){
-                //TODO REMPLACER PAR JSON STRINGIFY
-                int longitude = rs.getInt("LONGITUDE");
-                int latitude = rs.getInt("LATITUDE");
+
+                double longitude = rs.getDouble("LONGITUDE");
+                double latitude = rs.getDouble("LATITUDE");
                 int id = rs.getInt("ID_RESTAURANT");
                 String nom = rs.getString("NOM");
                 String adresse = rs.getString("ADRESSE");
-                json.append("{'longitude' : '").append(longitude).append("',")
-                    .append("'latitude' : '").append(latitude).append("',")
-                    .append("'id' : '").append(id).append("',")
-                        .append("'nom' : '").append(nom).append("',")
-                        .append("'adresse' :  '").append(adresse).append("'},");
+                liste.add(new Restaurant(id,nom,adresse,latitude,longitude));
             }
             statm.close();
-            json.deleteCharAt(json.length()-1);
-            json.append("]}");
-            return json.toString();
+            Restaurant[] restaurants = liste.toArray(new Restaurant[0]);
+            Gson gson = new Gson();
+
+            return gson.toJson(restaurants);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
