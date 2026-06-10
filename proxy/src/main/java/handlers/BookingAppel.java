@@ -14,6 +14,7 @@ public class BookingAppel implements HttpHandler {
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
         exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, OPTIONS");
         exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+        printTest();
 
         if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
             exchange.sendResponseHeaders(204, -1);
@@ -69,5 +70,9 @@ public class BookingAppel implements HttpHandler {
         int fin = json.indexOf(",", debut);
         if (fin == -1) fin = json.indexOf("}", debut);
         return json.substring(debut, fin).replaceAll("[\"\\s}]", "").trim();
+    }
+
+    public static void printTest(){
+        System.out.println("testsfsgsg");
     }
 }

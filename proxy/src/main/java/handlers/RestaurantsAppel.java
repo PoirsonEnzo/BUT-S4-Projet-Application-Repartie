@@ -14,7 +14,7 @@ public class RestaurantsAppel implements HttpHandler {
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
         exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
         exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
-
+        printTest();
         // Requete Preflight OPTIONS
         if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
             exchange.sendResponseHeaders(204, -1);
@@ -24,7 +24,7 @@ public class RestaurantsAppel implements HttpHandler {
         if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
             try {
                 Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-                ServiceRMI service = (ServiceRMI) registry.lookup("NomServiceMartin");
+                ServiceRMI service = (ServiceRMI) registry.lookup("BDDRestaurant");
                 String jsonResponse = service.getCoordonnees();
 
                 // Envoi de la réponse HTTP 200 avec le JSON
@@ -44,5 +44,8 @@ public class RestaurantsAppel implements HttpHandler {
         } else {
             exchange.sendResponseHeaders(405, -1);
         }
+    }
+    public static void printTest(){
+        System.out.println("testsfsgsg");
     }
 }

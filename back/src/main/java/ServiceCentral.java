@@ -12,7 +12,7 @@ public class ServiceCentral implements ServiceRMI {
             Connection connection = DBConnection.getConnection();
             Statement statm = connection.createStatement();
             statm.execute("""
-        SELECT * FROM restaurants 
+        SELECT * FROM restaurant
             """);
 
             ResultSet rs = statm.getResultSet();
