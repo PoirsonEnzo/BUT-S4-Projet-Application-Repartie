@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-// tonpackage.ServiceRMI;
 
 public class BookingAppel implements HttpHandler {
     @Override
@@ -35,7 +34,7 @@ public class BookingAppel implements HttpHandler {
                 String telephone = extractValeur(requestBody, "telephone");
 
                 Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-                ServiceRMI service = (ServiceRMI) registry.lookup("NomDuService");
+                ServiceRMI service = (ServiceRMI) registry.lookup("NomServiceMartin");
 
                 String jsonResponse = service.reserverTable(idRestau, date, periode, nbrPersonnes, prenom, nom, telephone);
 
@@ -65,13 +64,10 @@ public class BookingAppel implements HttpHandler {
     private String extractValeur(String json, String cle) {
         String recherche = "\"" + cle + "\":";
         int debut = json.indexOf(recherche);
-        if (debut == -1) return "0"; // Évite les crashs si la clé n'existe pas
-
+        if (debut == -1) return "0";
         debut += recherche.length();
         int fin = json.indexOf(",", debut);
         if (fin == -1) fin = json.indexOf("}", debut);
-
-        // Nettoie les guillemets et espaces restants
         return json.substring(debut, fin).replaceAll("[\"\\s}]", "").trim();
     }
 }

@@ -24,7 +24,7 @@ public class RestaurantsAppel implements HttpHandler {
         if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
             try {
                 Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-                ServiceRMI service = (ServiceRMI) registry.lookup("ServiceRestaurants");
+                ServiceRMI service = (ServiceRMI) registry.lookup("NomServiceMartin");
                 String jsonResponse = service.getCoordonnees();
 
                 // Envoi de la réponse HTTP 200 avec le JSON
