@@ -11,6 +11,7 @@ public class ServiceCentral implements ServiceRMI {
 
     @Override
     public String getCoordonnees() throws RemoteException {
+        StringBuilder json = new StringBuilder("{restaurants:[");
         try {
             Connection connection = DBConnection.getConnection();
             Statement statm = connection.createStatement();
