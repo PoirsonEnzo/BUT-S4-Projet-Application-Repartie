@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "es6",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "rootDir": "./ts",
+    "outDir": "./js",
+    "noEmitOnError": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}

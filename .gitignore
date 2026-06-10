@@ -40,4 +40,11 @@ build/
 ### VS Code ###
 .vscode/
 
+### Front ###
+front/node_modules/
+front/dist/
+front/js/
+
+### Système ###
 .DS_Store
+Thumbs.db

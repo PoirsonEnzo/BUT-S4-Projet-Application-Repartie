@@ -1,0 +1,265 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #f5f5f5;
+  --surface: #ffffff;
+  --border: #ddd;
+  --accent: #2d6a4f;
+  --text: #1a1a1a;
+  --muted: #888;
+  --nav-h: 52px;
+}
+
+body {
+  font-family: Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-h);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 24px;
+  z-index: 1000;
+}
+
+.nav-logo {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--accent);
+  margin-right: auto;
+}
+
+.nav-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: Georgia, serif;
+  font-size: 0.9rem;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.nav-tab:hover {
+  color: var(--text);
+}
+
+.nav-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+main {
+  padding-top: var(--nav-h);
+  height: 100%;
+}
+
+.tab-panel {
+  display: none;
+  height: calc(100vh - var(--nav-h));
+}
+
+.tab-panel.active {
+  display: flex;
+}
+
+#map {
+  flex: 1;
+  height: 100%;
+}
+
+#panel-cr {
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+#panel-cr h1 {
+  font-size: 1.6rem;
+  margin-bottom: 32px;
+  color: var(--accent);
+}
+
+#panel-cr h2 {
+  font-size: 1rem;
+  margin: 28px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+#panel-cr p,
+#panel-cr li {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #444;
+}
+
+#panel-cr ul {
+  padding-left: 20px;
+}
+
+#panel-cr li {
+  margin-bottom: 4px;
+}
+
+#panel-cr a {
+  color: var(--accent);
+}
+
+#panel-cr img {
+  max-width: 100%;
+  margin-top: 10px;
+  border: 1px solid var(--border);
+}
+
+.popup-nom {
+  font-weight: bold;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.popup-adresse {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.popup-btn {
+  display: block;
+  width: 100%;
+  padding: 7px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  font-family: Georgia, serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.popup-btn:hover {
+  opacity: 0.9;
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 28px;
+  width: 360px;
+  max-width: 90vw;
+}
+
+.modal h3 {
+  font-size: 1rem;
+  margin-bottom: 4px;
+  color: var(--accent);
+}
+
+.modal-sub {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.modal label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.modal input,
+.modal select {
+  width: 100%;
+  border: 1px solid var(--border);
+  font-family: Georgia, serif;
+  font-size: 0.85rem;
+  padding: 7px 9px;
+  margin-bottom: 14px;
+  outline: none;
+  background: white;
+}
+
+.modal input:focus,
+.modal select:focus {
+  border-color: var(--accent);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.btn-primary {
+  flex: 1;
+  padding: 9px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  font-family: Georgia, serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  padding: 9px 14px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  font-family: Georgia, serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  color: var(--text);
+}
+
+.modal-msg {
+  font-size: 0.78rem;
+  margin-top: 10px;
+  min-height: 16px;
+}
+
+.modal-msg.success {
+  color: var(--accent);
+}
+
+.modal-msg.error {
+  color: #c0392b;
+}

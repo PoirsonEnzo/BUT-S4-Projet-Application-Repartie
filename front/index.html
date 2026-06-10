@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nancy Explorer</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav>
+    <span class="nav-logo">Nancy Explorer</span>
+    <button class="nav-tab active" data-tab="carte">Carte</button>
+    <button class="nav-tab" data-tab="cr">Compte rendu</button>
+  </nav>
+
+  <main>
+
+    <div class="tab-panel active" id="panel-carte">
+      <div id="map"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-cr">
+      <h1>Compte rendu</h1>
+
+      <h2>Architecture</h2>
+      <img src="architecture.png" alt="Schéma de l'architecture" />
+
+      <h2>Ce qui a été fait</h2>
+      <ul>
+        <li>Service RMI exposant les restaurants et les réservations</li>
+        <li>Proxy HTTP faisant le lien entre le front et le service RMI</li>
+        <li>Intégration des données ouvertes (incidents Grand Nancy)</li>
+        <li>Carte Leaflet avec markers restaurants et incidents</li>
+        <li>Formulaire de réservation depuis la carte</li>
+      </ul>
+
+      <h2>Technologies</h2>
+      <ul>
+        <li>Front — TypeScript, Leaflet, esbuild, webetu</li>
+        <li>Proxy — Java 11, HttpServer, client RMI</li>
+        <li>Back — Java 11, RMI, JDBC Oracle, charlemagne</li>
+        <li>Base de données — Oracle (charlemagne)</li>
+      </ul>
+
+      <h2>Dépôt Git</h2>
+      <p><a href="#" id="lien-git">Lien vers le dépôt</a></p>
+    </div>
+
+  </main>
+
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <h3>Réserver une table</h3>
+      <p class="modal-sub" id="modal-restaurant-nom"></p>
+
+      <label>Nom</label>
+      <input type="text" id="input-nom" placeholder="Dupont" />
+
+      <label>Prénom</label>
+      <input type="text" id="input-prenom" placeholder="Jean" />
+
+      <label>Téléphone</label>
+      <input type="tel" id="input-tel" placeholder="06 12 34 56 78" />
+
+      <label>Nombre de convives</label>
+      <input type="number" id="input-convives" placeholder="2" min="1" />
+
+      <label>Date</label>
+      <input type="datetime-local" id="input-date" />
+
+      <label>Période</label>
+      <select id="input-periode">
+        <option value="midi">Midi</option>
+        <option value="soir">Soir</option>
+      </select>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" id="btn-annuler">Annuler</button>
+        <button class="btn-primary" id="btn-reserver">Réserver</button>
+      </div>
+      <p class="modal-msg" id="modal-msg"></p>
+    </div>
+  </div>
+
+  <script src="dist/index.js" type="module"></script>
+</body>
+</html>
