@@ -17,10 +17,7 @@
     </properties>
 
     <dependencies>
-        <!-- Pilote JDBC Oracle (charlemagne) -->
-        <!-- Si indisponible sur Maven Central, installez-le manuellement :
-             mvn install:install-file -Dfile=ojdbc11.jar -DgroupId=com.oracle.database.jdbc
-                 -DartifactId=ojdbc11 -Dversion=21.0 -Dpackaging=jar -->
+
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc11</artifactId>
@@ -32,7 +29,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.10.1</version> <!-- Vérifiez la dernière version sur [Maven Central](https://mvnrepository.com/artifact/com.google.code.gson/gson) -->
+            <version>2.10.1</version> 
         </dependency>
     </dependencies>
     <build>
