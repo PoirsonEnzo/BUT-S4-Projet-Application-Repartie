@@ -12,8 +12,8 @@ Léo BOUGNOUX
 ### Front (TS)
 ```npm run build``` dans le dossier front/
 ### Back (ServiceRMI)
-```javac -cp .:lib/gson-2.11.0.jar *.java``` dans le dossier back
+```javac -cp .:lib/gson-2.11.0.jar *.java``` dans le dossier back  
 ```java -cp .:lib/* LancerService``` dans le dossier back
 ### Proxy (HttpClient)
-```javac ProxyServer.java```dans le dossier proxy
+```javac ProxyServer.java```dans le dossier proxy  
 ```java ProxyServer.java```dans le dossier proxy
