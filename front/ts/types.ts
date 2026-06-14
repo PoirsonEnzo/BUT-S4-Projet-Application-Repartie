@@ -31,3 +31,35 @@ export interface Incident {
   endtime: string
   location: IncidentLocation
 }
+
+export interface VelibStation {
+  station_id: string
+  nom: string
+  adresse: string
+  latitude: number
+  longitude: number
+  velos_disponibles: number
+  places_libres: number
+}
+
+export interface VelibInfoStation {
+  station_id: string
+  name: string
+  address: string
+  lat: number
+  lon: number
+}
+
+export interface VelibStatusStation {
+  station_id: string
+  num_bikes_available: number
+  num_docks_available: number
+}
+
+export interface VelibInfoResponse {
+  data: { stations: VelibInfoStation[] }
+}
+
+export interface VelibStatusResponse {
+  data: { stations: VelibStatusStation[] }
+}

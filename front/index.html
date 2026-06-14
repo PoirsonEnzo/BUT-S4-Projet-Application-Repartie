@@ -31,21 +31,22 @@
       <ul>
         <li>Service RMI exposant les restaurants et les réservations</li>
         <li>Proxy HTTP faisant le lien entre le front et le service RMI</li>
-        <li>Intégration des données ouvertes (incidents Grand Nancy)</li>
-        <li>Carte Leaflet avec markers restaurants et incidents</li>
+        <li>Proxy HTTP récupérant les incidents de circulation du Grand Nancy</li>
+        <li>Intégration des données ouvertes vélib directement depuis le front</li>
+        <li>Carte Leaflet avec markers restaurants, incidents et stations vélib</li>
         <li>Formulaire de réservation depuis la carte</li>
       </ul>
 
       <h2>Technologies</h2>
       <ul>
-        <li>Front — TypeScript, Leaflet, esbuild, webetu</li>
-        <li>Proxy — Java 11, HttpServer, client RMI</li>
-        <li>Back — Java 11, RMI, JDBC Oracle, charlemagne</li>
-        <li>Base de données — Oracle (charlemagne)</li>
+        <li>Front : TypeScript, Leaflet, esbuild, webetu</li>
+        <li>Proxy : Java 11, HttpServer, client RMI</li>
+        <li>Back : Java 11, RMI, JDBC Oracle, charlemagne</li>
+        <li>Base de données : Oracle (charlemagne)</li>
       </ul>
 
       <h2>Dépôt Git</h2>
-      <p><a href="#" id="lien-git">Lien vers le dépôt</a></p>
+      <p><a href="https://github.com/PoirsonEnzo/Projet_Application_repartie" id="lien-git">Lien vers le dépôt</a></p>
     </div>
 
   </main>
@@ -68,7 +69,7 @@
       <input type="number" id="input-convives" placeholder="2" min="1" />
 
       <label>Date</label>
-      <input type="datetime-local" id="input-date" />
+      <input type="date" id="input-date" />
 
       <label>Période</label>
       <select id="input-periode">
