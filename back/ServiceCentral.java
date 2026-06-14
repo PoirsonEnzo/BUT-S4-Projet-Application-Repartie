@@ -74,7 +74,7 @@ public class ServiceCentral implements ServiceRMI {
             statm2.setString(3, date);
             statm2.setString(4, periode);
             statm2.execute();
-            ResultSet rs = statm.getResultSet();
+            ResultSet rs = statm2.getResultSet();
 
             String json;
             if (rs.next()) {
@@ -92,12 +92,14 @@ public class ServiceCentral implements ServiceRMI {
                 ps.setString(7, periode);
                 ps.execute();
                 connection.commit();
-                statm.close();
+                statm2.close();
+                statm1.close();
                 ps.close();
                 json = "{\"response\":\"OK\"}";
             } else {
                 connection.commit();
-                statm.close();
+                statm1.close();
+                statm2.close();
                 json = "{\"response\":\"FAILURE\"}";
             }
             return json;
