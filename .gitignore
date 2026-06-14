@@ -14,7 +14,6 @@ target/
 .mvn
 .idea
 out/
-*.jar
 *.class
 *.conf
 
