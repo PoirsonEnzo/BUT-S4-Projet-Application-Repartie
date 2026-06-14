@@ -4,8 +4,8 @@ import { Incident, Reservation, Restaurant, VelibStation, VelibInfoResponse, Vel
 export async function getRestaurants(): Promise<Restaurant[]> {
   const response = await fetch(`${PROXY_URL}/restaurants`);
   if (!response.ok) throw new Error("Erreur lors de la récupération des restaurants");
-  const data = await response.json() as { restaurants: Restaurant[] };
-  return data.restaurants;
+  const data = await response.json() as Restaurant[] ;
+  return data;
 }
 
 export async function getIncidents(): Promise<Incident[]> {
@@ -16,12 +16,13 @@ export async function getIncidents(): Promise<Incident[]> {
 }
 
 export async function postReservation(reservation: Reservation): Promise<boolean> {
-  const response = await fetch(`${PROXY_URL}/reservation`, {
+  const response = await fetch(`${PROXY_URL}/booking`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(reservation)
   });
-  return response.ok;
+  const data = await response.json() as { response: string };
+  return data.response === "OK";
 }
 
 export async function getVelibStations(): Promise<VelibStation[]> {

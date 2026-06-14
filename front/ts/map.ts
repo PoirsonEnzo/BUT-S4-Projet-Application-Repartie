@@ -1,5 +1,5 @@
 import * as L from "leaflet";
-import { ICONE_BLEUE, ICONE_OMBRE, ICONE_ROUGE } from "./config";
+import { ICONE_BLEUE, ICONE_OMBRE, ICONE_ROUGE, ICONE_VERTE } from "./config";
 import { Incident, Restaurant, VelibStation } from "./types";
 
 let map: L.Map;
@@ -11,6 +11,14 @@ export function initMap(): void {
 }
 
 export function ajouterRestaurants(restaurants: Restaurant[], onReserver: (r: Restaurant) => void): void {
+  const iconeRestaurant = L.icon({
+    iconUrl: ICONE_VERTE,
+    shadowUrl: ICONE_OMBRE,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34]
+  });
+
   for (const restaurant of restaurants) {
     const popup = `
       <div class="popup-nom">${restaurant.nom}</div>
@@ -18,7 +26,7 @@ export function ajouterRestaurants(restaurants: Restaurant[], onReserver: (r: Re
       <button class="popup-btn" id="btn-reserver-${restaurant.id_restaurant}">Réserver</button>
     `;
 
-    const marker = L.marker([restaurant.latitude, restaurant.longitude]);
+    const marker = L.marker([restaurant.latitude, restaurant.longitude], { icon: iconeRestaurant });
     marker.bindPopup(popup);
     marker.addTo(map);
 
