@@ -1,14 +1,15 @@
-package handlers;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+
 public class BookingAppel implements HttpHandler {
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
@@ -34,7 +35,7 @@ public class BookingAppel implements HttpHandler {
                 String nom = extractValeur(requestBody, "nom");
                 String telephone = extractValeur(requestBody, "telephone");
 
-                Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+                Registry registry = LocateRegistry.getRegistry("194.214.170.56", 1099);
                 ServiceRMI service = (ServiceRMI) registry.lookup("NomServiceMartin");
 
                 String jsonResponse = service.reserverTable(idRestau, date, periode, nbrPersonnes, prenom, nom, telephone);
@@ -49,7 +50,9 @@ public class BookingAppel implements HttpHandler {
             } catch (Exception e) {
                 e.printStackTrace();
                 String errorMsg = "{\"error\": \"Échec de l'enregistrement de la réservation via RMI\"}";
-                exchange.sendResponseHeaders(500, errorMsg.length());
+                byte[] errBytes = errorMsg.getBytes("UTF-8");
+                exchange.sendResponseHeaders(500, errBytes.length);
+                exchange.getResponseBody().write(errBytes);    
                 exchange.getResponseBody().write(errorMsg.getBytes());
                 exchange.getResponseBody().close();
             }
@@ -59,20 +62,24 @@ public class BookingAppel implements HttpHandler {
     }
 
     /**
-     * extraire une valeur d'une chaîne JSON simple
-     * sans utiliser de librairie externe.
+     * extraire une valeur d'une chaîne JSON simple sans utiliser de librairie
+     * externe.
      */
     private String extractValeur(String json, String cle) {
         String recherche = "\"" + cle + "\":";
         int debut = json.indexOf(recherche);
-        if (debut == -1) return "0";
+        if (debut == -1) {
+            throw new IllegalArgumentException("Champ manquant : " + cle);
+        }
         debut += recherche.length();
         int fin = json.indexOf(",", debut);
-        if (fin == -1) fin = json.indexOf("}", debut);
+        if (fin == -1) {
+            fin = json.indexOf("}", debut);
+        }
         return json.substring(debut, fin).replaceAll("[\"\\s}]", "").trim();
     }
 
-    public static void printTest(){
+    public static void printTest() {
         System.out.println("testsfsgsg");
     }
 }

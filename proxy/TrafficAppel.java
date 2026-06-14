@@ -1,14 +1,16 @@
-package handlers;
-
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import java.time.Duration;
 
 public class TrafficAppel implements HttpHandler {
     @Override
@@ -18,27 +20,40 @@ public class TrafficAppel implements HttpHandler {
         exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
         printTest();
+        System.out.println("quoi");
         //Requetes Preflight OPTIONS envoyees par navigateurs
         if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
             exchange.sendResponseHeaders(204, -1);
+                    System.out.println("0");
             return;
         }
-
+        System.out.println("1");
         if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                    System.out.println("1.5");
+
             try {
                 //HttpClient pour appeler l API Waze / G-NY externe
                 //IUT : configurer le proxy de l iut dans ce httpclient
-                /*HttpClient client = HttpClient.newBuilder()j
-                        // Remplacer adresse et port fourni dans la doc de l iut
-                        .proxy(java.net.ProxySelector.of(new java.net.InetSocketAddress("proxy.iutnc.univ-lorraine.fr", 3128)))
-                        .build();*/
-                HttpClient client = HttpClient.newHttpClient();
+                HttpClient client = HttpClient.newBuilder()
+                    .proxy(ProxySelector.of(new InetSocketAddress("www-cache.iutnc.univ-lorraine.fr", 3128)))
+                    .connectTimeout(Duration.ofSeconds(5))  // ← ajoute ça
+		    .followRedirects(HttpClient.Redirect.ALWAYS)                    
+		    .build();
+                                System.out.println("2");
+
+                //HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("https://carto.g-ny.org/data/cifs/cifs_waze_v2.json"))                        .GET()
-                        .build();
+                    .uri(URI.create("https://carto.g-ny.eu/data/cifs/cifs_waze_v2.json"))
+                    .timeout(Duration.ofSeconds(10))  // ← et ça
+                    .GET()
+                    .build();
+                System.out.println("3");
 
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 String jsonResponse = response.body();
+		        System.out.println(response);
+                System.out.println("5");
+
 
                 //Renvoyer la reponse JSON au format HTTP 200 (OK)
                 exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
@@ -55,12 +70,14 @@ public class TrafficAppel implements HttpHandler {
                 exchange.getResponseBody().close();
             }
         } else {
+                    System.out.println("4");
+
             // Methode non autorisee (POST sur une route GET)
             exchange.sendResponseHeaders(405, -1);
         }
     }
     public static void printTest(){
-        System.out.println("testsfsgsg");
+        System.out.println("testsfsgsgqdqdqdqdqd");
     }
 }
 

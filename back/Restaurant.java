@@ -3,7 +3,7 @@ public class Restaurant{
     private String nom;
     private String adresse;
     private double latitude;
-    private double longitutde;
+    private double longitude;
 
     public Restaurant(int id_restaurant, String nom, String adresse, double latitude, double longitutde) {
         this.id_restaurant = id_restaurant;
