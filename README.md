@@ -5,3 +5,9 @@ Martin GOUTHIER
 Enzo POIRSON
 Yanis HUSSER
 Léo BOUGNOUX
+
+
+## Installation/Lancement des services:
+
+### Front (TS)
+```npm run build``` dans le dossier front/
