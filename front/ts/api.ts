@@ -9,7 +9,7 @@ export async function getRestaurants(): Promise<Restaurant[]> {
 }
 
 export async function getIncidents(): Promise<Incident[]> {
-  const response = await fetch(`${PROXY_URL}/incidents`);
+  const response = await fetch(`${PROXY_URL}/traffic`);
   if (!response.ok) throw new Error("Erreur lors de la récupération des incidents");
   const data = await response.json() as { incidents: Incident[] };
   return data.incidents;
