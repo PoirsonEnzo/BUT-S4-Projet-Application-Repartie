@@ -35,20 +35,45 @@ public class ServiceCentral implements ServiceRMI {
         Connection connection = null;
         try {
             connection = DBConnection.getConnection();
-            PreparedStatement statm = connection.prepareStatement("""
+
+
+            //Blocage ciblé sur les lignes potentiellement touchées
+            PreparedStatement statm1 = connection.prepareStatement("""
+            SELECT ID_TABLE
+            FROM RESERVATION
+            WHERE DATE_HEURE_RESERVATION = TO_DATE(?, 'DD-MM-YYYY')
+            AND PERIODE = ?
+            AND ID_TABLE IN (
                 SELECT ID_TABLE
                 FROM TABLE_RESTO
-                WHERE ID_RESTAURANT = ? AND CAPACITE_MAX >= ?
-                MINUS
-                SELECT ID_TABLE
-                FROM RESERVATION
-                WHERE DATE_HEURE_RESERVATION = TO_DATE(?,'DD-MM-YYYY') AND PERIODE = ?
+                WHERE ID_RESTAURANT = ?
+            )
+            FOR UPDATE
             """);
-            statm.setInt(1, idRestau);
-            statm.setInt(2, nbrPersonnes);
-            statm.setString(3, date);
-            statm.setString(4, periode);
-            statm.execute();
+            statm1.setString(1,date);
+            statm1.setString(2,periode);
+            statm1.setInt(3,idRestau);
+            statm1.execute();
+
+            //récupération des infos
+            PreparedStatement statm2 = connection.prepareStatement("""
+                SELECT ID_TABLE, CAPACITE_MAX
+                FROM TABLE_RESTO
+                WHERE ID_RESTAURANT = ?
+                AND CAPACITE_MAX >= ?
+                AND ID_TABLE NOT IN (
+                    SELECT ID_TABLE
+                    FROM RESERVATION
+                    WHERE DATE_HEURE_RESERVATION = TO_DATE(?, 'DD-MM-YYYY')
+                        AND PERIODE = ?
+                )
+                ORDER BY CAPACITE_MAX
+            """);
+            statm2.setInt(1, idRestau);
+            statm2.setInt(2, nbrPersonnes);
+            statm2.setString(3, date);
+            statm2.setString(4, periode);
+            statm2.execute();
             ResultSet rs = statm.getResultSet();
 
             String json;
@@ -77,7 +102,7 @@ public class ServiceCentral implements ServiceRMI {
             }
             return json;
         } catch (SQLException e) {
-            try { if (connection != null) connection.rollback(); } catch (SQLException ignored) {}
+            try { if (connection != null) connection.rollback(); } catch (SQLException error) {}
             throw new RemoteException("Erreur BDD reserverTable : " + e.getMessage());
         }
     }
