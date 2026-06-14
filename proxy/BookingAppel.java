@@ -36,7 +36,7 @@ public class BookingAppel implements HttpHandler {
                 String telephone = extractValeur(requestBody, "telephone");
 
                 Registry registry = LocateRegistry.getRegistry("194.214.170.56", 1099);
-                ServiceRMI service = (ServiceRMI) registry.lookup("NomServiceMartin");
+                ServiceRMI service = (ServiceRMI) registry.lookup("BDDRestaurant");
 
                 String jsonResponse = service.reserverTable(idRestau, date, periode, nbrPersonnes, prenom, nom, telephone);
 
@@ -48,14 +48,16 @@ public class BookingAppel implements HttpHandler {
                 os.close();
 
             } catch (Exception e) {
-                e.printStackTrace();
-                String errorMsg = "{\"error\": \"Échec de l'enregistrement de la réservation via RMI\"}";
-                byte[] errBytes = errorMsg.getBytes("UTF-8");
-                exchange.sendResponseHeaders(500, errBytes.length);
-                exchange.getResponseBody().write(errBytes);    
-                exchange.getResponseBody().write(errorMsg.getBytes());
-                exchange.getResponseBody().close();
-            }
+    // Renvoie une erreur 500 lisible au lieu de crasher
+e.printStackTrace(); // ← pour voir la vraie erreur dans le terminal
+    String errorMsg = "{\"error\": \"" + e.getMessage() + "\"}";
+//    String errorMsg = "{\"error\": \"Service de réservation indisponible\"}";
+    byte[] errBytes = errorMsg.getBytes("UTF-8");
+    exchange.sendResponseHeaders(500, errBytes.length);
+    try (OutputStream os = exchange.getResponseBody()) {
+        os.write(errBytes);
+    }
+}
         } else {
             exchange.sendResponseHeaders(405, -1);
         }
