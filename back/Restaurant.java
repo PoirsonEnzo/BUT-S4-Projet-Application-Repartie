@@ -5,11 +5,11 @@ public class Restaurant{
     private double latitude;
     private double longitude;
 
-    public Restaurant(int id_restaurant, String nom, String adresse, double latitude, double longitutde) {
+    public Restaurant(int id_restaurant, String nom, String adresse, double latitude, double longitude) {
         this.id_restaurant = id_restaurant;
         this.nom = nom;
         this.adresse = adresse;
         this.latitude = latitude;
-        this.longitutde = longitutde;
+        this.longitude = longitude;
     }
 }
