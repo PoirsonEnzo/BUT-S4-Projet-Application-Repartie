@@ -11,8 +11,8 @@ public class ServiceCentral implements ServiceRMI {
 
     @Override
     public String getCoordonnees() throws RemoteException {
+        StringBuilder json = new StringBuilder("{restaurants:[");
         try {
-            System.out.println("Demande de coordonnées...");
             Connection connection = DBConnection.getConnection();
             Statement statm = connection.createStatement();
             statm.executeQuery("""
@@ -34,7 +34,6 @@ public class ServiceCentral implements ServiceRMI {
             statm.close();
             Restaurant[] restaurants = liste.toArray(new Restaurant[0]);
             Gson gson = new Gson();
-            System.out.println("Coordonnées envoyées");
 
             return gson.toJson(restaurants);
         } catch (SQLException e) {
@@ -44,12 +43,6 @@ public class ServiceCentral implements ServiceRMI {
 
     @Override
     public String reserverTable(int idRestau, String date, String periode, int nbrPersonnes, String prenom, String nom, String telephone) throws RemoteException, SQLException {
-        System.out.println("Demande de réservation...");
-        System.out.println("idRestau : " + idRestau);
-        System.out.println("Date : " = date + ", période : " + periode);
-        System.out.println("Pour " + nbrPersonnes + " personne(s)");
-        System.out.println("Par " + prenom + " " + nom);
-        System.out.println("Tel : " + telephone);
         Connection connection = null;
         try {
             connection = DBConnection.getConnection();
@@ -77,7 +70,6 @@ public class ServiceCentral implements ServiceRMI {
             String json;
             // Ligne présente = Réservation disponible
             if (rs.next()){
-                System.out.println("Réservation disponible !");
                 int idTable = rs.getInt(1);
 
                 // Ajout de la réservation
@@ -94,14 +86,12 @@ public class ServiceCentral implements ServiceRMI {
                 ps.setString(7,periode);
                 ps.execute();
 
-                System.out.println("Réservation effectuée");
                 connection.commit();
 
                 statm.close();
 
                 json = "{'response' : 'OK'}";
             } else {
-                System.out.println("Aucune réservation disponible")
                 connection.commit();
                 statm.close();
                 json = "{'response' : 'FAILURE'}";

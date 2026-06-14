@@ -1,61 +1,63 @@
-import { getIncidents, getRestaurants, postReservation } from "./api"
-import { initMap, ajouterRestaurants, ajouterIncidents } from "./map"
-import { Restaurant, Reservation } from "./types"
+import { getIncidents, getRestaurants, getVelibStations, postReservation } from "./api";
+import { initMap, ajouterRestaurants, ajouterIncidents, ajouterVelibs } from "./map";
+import { Restaurant, Reservation } from "./types";
 
-let restaurantCourant: Restaurant | null = null
+let restaurantCourant: Restaurant | null = null;
 
-// Switch onglets
 document.querySelectorAll(".nav-tab").forEach(tab => {
   tab.addEventListener("click", () => {
-    const cible = (tab as HTMLElement).dataset.tab
+    const cible = (tab as HTMLElement).dataset.tab;
 
-    document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"))
-    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"))
+    document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
 
-    tab.classList.add("active")
-    document.getElementById(`panel-${cible}`)?.classList.add("active")
-  })
-})
+    tab.classList.add("active");
+    document.getElementById(`panel-${cible}`)?.classList.add("active");
+  });
+});
 
-// Modal
-const overlay = document.getElementById("modal-overlay")!
-const modalNom = document.getElementById("modal-restaurant-nom")!
-const btnAnnuler = document.getElementById("btn-annuler")!
-const btnReserver = document.getElementById("btn-reserver")!
-const modalMsg = document.getElementById("modal-msg")!
+const overlay = document.getElementById("modal-overlay")!;
+const modalNom = document.getElementById("modal-restaurant-nom")!;
+const btnAnnuler = document.getElementById("btn-annuler")!;
+const btnReserver = document.getElementById("btn-reserver")!;
+const modalMsg = document.getElementById("modal-msg")!;
 
 function ouvrirModal(restaurant: Restaurant): void {
-  restaurantCourant = restaurant
-  modalNom.textContent = restaurant.nom
-  modalMsg.textContent = ""
-  modalMsg.className = "modal-msg"
-  overlay.classList.add("open")
+  restaurantCourant = restaurant;
+  modalNom.textContent = restaurant.nom;
+  modalMsg.textContent = "";
+  modalMsg.className = "modal-msg";
+  overlay.classList.add("open");
 }
 
 function fermerModal(): void {
-  restaurantCourant = null
-  overlay.classList.remove("open")
+  restaurantCourant = null;
+  overlay.classList.remove("open");
 }
 
-btnAnnuler.addEventListener("click", fermerModal)
+btnAnnuler.addEventListener("click", fermerModal);
 overlay.addEventListener("click", (e) => {
-  if (e.target === overlay) fermerModal()
-})
+  if (e.target === overlay) {
+    fermerModal();
+  }
+});
 
 btnReserver.addEventListener("click", async () => {
-  if (!restaurantCourant) return
+  if (!restaurantCourant) return;
 
-  const nom = (document.getElementById("input-nom") as HTMLInputElement).value.trim()
-  const prenom = (document.getElementById("input-prenom") as HTMLInputElement).value.trim()
-  const telephone = (document.getElementById("input-tel") as HTMLInputElement).value.trim()
-  const nbConvives = parseInt((document.getElementById("input-convives") as HTMLInputElement).value)
-  const date = (document.getElementById("input-date") as HTMLInputElement).value
-  const periode = (document.getElementById("input-periode") as HTMLSelectElement).value
+  const nom = (document.getElementById("input-nom") as HTMLInputElement).value.trim();
+  const prenom = (document.getElementById("input-prenom") as HTMLInputElement).value.trim();
+  const telephone = (document.getElementById("input-tel") as HTMLInputElement).value.trim();
+  const nbConvives = parseInt((document.getElementById("input-convives") as HTMLInputElement).value);
+  const dateBrute = (document.getElementById("input-date") as HTMLInputElement).value;
+  const [annee, mois, jour] = dateBrute.split("-");
+  const date = `${jour}-${mois}-${annee}`;
+  const periode = (document.getElementById("input-periode") as HTMLSelectElement).value;
 
   if (!nom || !prenom || !telephone || !nbConvives || !date || !periode) {
-    modalMsg.textContent = "Veuillez remplir tous les champs"
-    modalMsg.className = "modal-msg error"
-    return
+    modalMsg.textContent = "Veuillez remplir tous les champs";
+    modalMsg.className = "modal-msg error";
+    return;
   }
 
   const reservation: Reservation = {
@@ -66,37 +68,43 @@ btnReserver.addEventListener("click", async () => {
     nbrPersonnes: nbConvives,
     date,
     periode
-  }
+  };
 
-  const succes = await postReservation(reservation)
+  const succes = await postReservation(reservation);
 
   if (succes) {
-    modalMsg.textContent = "Réservation confirmée"
-    modalMsg.className = "modal-msg success"
-    setTimeout(fermerModal, 2000)
+    modalMsg.textContent = "Réservation confirmée";
+    modalMsg.className = "modal-msg success";
+    setTimeout(fermerModal, 2000);
   } else {
-    modalMsg.textContent = "Aucune table disponible pour ce créneau"
-    modalMsg.className = "modal-msg error"
+    modalMsg.textContent = "Aucune table disponible pour ce créneau";
+    modalMsg.className = "modal-msg error";
   }
-})
+});
 
-// Initialisation
 async function init(): Promise<void> {
-  initMap()
+  initMap();
 
   try {
-    const restaurants = await getRestaurants()
-    ajouterRestaurants(restaurants, ouvrirModal)
+    const restaurants = await getRestaurants();
+    ajouterRestaurants(restaurants, ouvrirModal);
   } catch (e) {
-    console.error("Impossible de charger les restaurants", e)
+    console.error("Impossible de charger les restaurants", e);
   }
 
   try {
-    const incidents = await getIncidents()
-    ajouterIncidents(incidents)
+    const incidents = await getIncidents();
+    ajouterIncidents(incidents);
   } catch (e) {
-    console.error("Impossible de charger les incidents", e)
+    console.error("Impossible de charger les incidents", e);
+  }
+
+  try {
+    const stations = await getVelibStations();
+    ajouterVelibs(stations);
+  } catch (e) {
+    console.error("Impossible de charger les vélibs", e);
   }
 }
 
-init()
+init();
