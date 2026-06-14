@@ -1,11 +1,9 @@
-package handlers;
-
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 
 public class RestaurantsAppel implements HttpHandler {
     @Override
@@ -14,18 +12,24 @@ public class RestaurantsAppel implements HttpHandler {
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
         exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
         exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
-        printTest();
+        System.out.println("connexion");
         // Requete Preflight OPTIONS
         if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
             exchange.sendResponseHeaders(204, -1);
+                    System.out.println("connexion raté");
+
             return;
         }
-
+        //System.out.println("Méthode reçue : [" + exchange.getRequestMethod() + "]");
+        //System.out.println("Est GET : " + "GET".equalsIgnoreCase(exchange.getRequestMethod()));
         if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                    System.out.println("request");
+
             try {
-                Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+                Registry registry = LocateRegistry.getRegistry("194.214.170.56", 1099);
                 ServiceRMI service = (ServiceRMI) registry.lookup("BDDRestaurant");
                 String jsonResponse = service.getCoordonnees();
+                System.out.println("dans try");
 
                 // Envoi de la réponse HTTP 200 avec le JSON
                 exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
@@ -36,13 +40,19 @@ public class RestaurantsAppel implements HttpHandler {
                 os.close();
 
             } catch (Exception e) {
-                String errorMsg = "{\"error\": \"Erreur lors de la communication avec le serveur RMI\"}";
-                exchange.sendResponseHeaders(500, errorMsg.length());
-                exchange.getResponseBody().write(errorMsg.getBytes());
-                exchange.getResponseBody().close();
+                System.err.println("[RMI] ERREUR : " + e.getClass().getName() + " - " + e.getMessage());
+                e.printStackTrace();
+                String errorMsg = "{\"error\": \"" + e.getMessage().replace("\"", "'") + "\"}";
+                byte[] errBytes = errorMsg.getBytes("UTF-8");
+                exchange.sendResponseHeaders(500, errBytes.length);
+                try (OutputStream os = exchange.getResponseBody()) {
+                    os.write(errBytes);
+                }
             }
         } else {
             exchange.sendResponseHeaders(405, -1);
+                    System.out.println("request raté");
+
         }
     }
     public static void printTest(){

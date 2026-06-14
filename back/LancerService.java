@@ -11,5 +11,6 @@ public class LancerService {
         Registry reg = LocateRegistry.createRegistry(1099);
         reg.rebind("BDDRestaurant",rmi);
         System.out.println("Service activé");
+	System.out.println(service.getCoordonnees());
     }
 }
