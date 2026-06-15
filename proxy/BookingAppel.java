@@ -1,15 +1,26 @@
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Properties;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 public class BookingAppel implements HttpHandler {
+    //Partie fichier de config
+    private static final Properties config = new Properties();
 
+    static {
+        try {
+            config.load(new FileInputStream("config.properties"));
+        } catch (IOException e) {
+            throw new RuntimeException("config.properties introuvable : " + e.getMessage());
+        }
+    }
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
@@ -35,8 +46,14 @@ public class BookingAppel implements HttpHandler {
                 String nom = extractValeur(requestBody, "nom");
                 String telephone = extractValeur(requestBody, "telephone");
 
-                Registry registry = LocateRegistry.getRegistry("194.214.170.56", 1099);
-                ServiceRMI service = (ServiceRMI) registry.lookup("BDDRestaurant");
+                //Si fichier de config
+                Registry registry = LocateRegistry.getRegistry(
+                    config.getProperty("rmi.host"),
+                    Integer.parseInt(config.getProperty("rmi.port"))
+                );
+                ServiceRMI service = (ServiceRMI) registry.lookup(config.getProperty("rmi.service.restaurants"));
+                /*Registry registry = LocateRegistry.getRegistry("194.214.170.56", 1099);
+                ServiceRMI service = (ServiceRMI) registry.lookup("BDDRestaurant");*/
 
                 String jsonResponse = service.reserverTable(idRestau, date, periode, nbrPersonnes, prenom, nom, telephone);
 
@@ -48,24 +65,21 @@ public class BookingAppel implements HttpHandler {
                 os.close();
 
             } catch (Exception e) {
-    // Renvoie une erreur 500 lisible au lieu de crasher
-e.printStackTrace(); // ← pour voir la vraie erreur dans le terminal
-    String errorMsg = "{\"error\": \"" + e.getMessage() + "\"}";
-//    String errorMsg = "{\"error\": \"Service de réservation indisponible\"}";
-    byte[] errBytes = errorMsg.getBytes("UTF-8");
-    exchange.sendResponseHeaders(500, errBytes.length);
-    try (OutputStream os = exchange.getResponseBody()) {
-        os.write(errBytes);
-    }
-}
+                e.printStackTrace();
+                String errorMsg = "{\"error\": \"" + e.getMessage() + "\"}";
+                byte[] errBytes = errorMsg.getBytes("UTF-8");
+                exchange.sendResponseHeaders(500, errBytes.length);
+                try (OutputStream os = exchange.getResponseBody()) {
+                    os.write(errBytes);
+                }
+            }
         } else {
             exchange.sendResponseHeaders(405, -1);
         }
     }
 
     /**
-     * extraire une valeur d'une chaîne JSON simple sans utiliser de librairie
-     * externe.
+     * extraire une valeur d'une chaîne JSON simple sans utiliser de librairieexterne
      */
     private String extractValeur(String json, String cle) {
         String recherche = "\"" + cle + "\":";

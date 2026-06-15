@@ -1,4 +1,5 @@
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -7,12 +8,23 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.Properties;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import java.time.Duration;
 
 public class TrafficAppel implements HttpHandler {
+    //Partie fichier de config
+    private static final Properties config = new Properties();
+
+    static {
+        try {
+            config.load(new FileInputStream("config.properties"));
+        } catch (IOException e) {
+            throw new RuntimeException("config.properties introuvable : " + e.getMessage());
+        }
+    }
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         //Gerer le CORS pour permettre au JavaScript de webetu de lire la reponse
@@ -36,15 +48,16 @@ public class TrafficAppel implements HttpHandler {
                 //IUT : configurer le proxy de l iut dans ce httpclient
                 HttpClient client = HttpClient.newBuilder()
                     .proxy(ProxySelector.of(new InetSocketAddress("www-cache.iutnc.univ-lorraine.fr", 3128)))
-                    .connectTimeout(Duration.ofSeconds(5))  // ← ajoute ça
+                    .connectTimeout(Duration.ofSeconds(5))
 		    .followRedirects(HttpClient.Redirect.ALWAYS)                    
 		    .build();
                                 System.out.println("2");
 
                 //HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://carto.g-ny.eu/data/cifs/cifs_waze_v2.json"))
-                    .timeout(Duration.ofSeconds(10))  // ← et ça
+                    //.uri(URI.create("https://carto.g-ny.eu/data/cifs/cifs_waze_v2.json"))
+                    .uri(URI.create(config.getProperty("traffic.url")))
+                    .timeout(Duration.ofSeconds(10))
                     .GET()
                     .build();
                 System.out.println("3");
@@ -72,7 +85,7 @@ public class TrafficAppel implements HttpHandler {
         } else {
                     System.out.println("4");
 
-            // Methode non autorisee (POST sur une route GET)
+            // Methode non autorisee (POST sur GET)
             exchange.sendResponseHeaders(405, -1);
         }
     }

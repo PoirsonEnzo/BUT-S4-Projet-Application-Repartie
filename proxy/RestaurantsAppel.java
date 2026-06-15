@@ -1,11 +1,25 @@
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Properties;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 public class RestaurantsAppel implements HttpHandler {
+    //Partie fichier de config
+    private static final Properties config = new Properties();
+
+    static {
+        try {
+            config.load(new FileInputStream("config.properties"));
+        } catch (IOException e) {
+            throw new RuntimeException("config.properties introuvable : " + e.getMessage());
+        }
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         // Gestion du CORS
@@ -20,14 +34,19 @@ public class RestaurantsAppel implements HttpHandler {
 
             return;
         }
-        //System.out.println("Méthode reçue : [" + exchange.getRequestMethod() + "]");
-        //System.out.println("Est GET : " + "GET".equalsIgnoreCase(exchange.getRequestMethod()));
+
         if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
                     System.out.println("request");
 
             try {
-                Registry registry = LocateRegistry.getRegistry("194.214.170.56", 1099);
-                ServiceRMI service = (ServiceRMI) registry.lookup("BDDRestaurant");
+                //Si fichier de config
+                Registry registry = LocateRegistry.getRegistry(
+                    config.getProperty("rmi.host"),
+                    Integer.parseInt(config.getProperty("rmi.port"))
+                );
+                ServiceRMI service = (ServiceRMI) registry.lookup(config.getProperty("rmi.service.restaurants"));
+                /*Registry registry = LocateRegistry.getRegistry("194.214.170.56", 1099);
+                ServiceRMI service = (ServiceRMI) registry.lookup("BDDRestaurant");*/
                 String jsonResponse = service.getCoordonnees();
                 System.out.println("dans try");
 
